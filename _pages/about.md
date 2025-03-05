@@ -12,4 +12,4 @@ I am very fortunate to be advised by [Asst. Prof. Xingda Wei](https://ipads.se.s
 
 You can find my CV here: [Yuxin Lai's Curriculum Vitae](https://kkkstra.github.io/files/CV.pdf).
 
-[Email](mailto:yuxinlai@hust.edu.cn) / [Github](https://github.com/kkstra)
+[Email](mailto:yuxinlai@hust.edu.cn) / [Github](https://github.com/kkkstra)
