@@ -7,7 +7,7 @@
 
 # Site Settings
 title                    : "Yuxin Lai"
-description              : "a MLSys researcher"
+description              : "Per aspera ad astra"
 repository               : "kkkstra/kkkstra.github.io"
 google_scholar_stats_use_cdn : true
 
@@ -24,7 +24,7 @@ author:
   name             : "Yuxin Lai"
   avatar           : "images/avatar.jpg"
   bio              : ""
-  location         : "Beijing, China"
+  location         : "Hong Kong, China"
   employer         :
   pubmed           : 
   googlescholar    : "https://scholar.google.com/citations?user=VRT104sAAAAJ"
