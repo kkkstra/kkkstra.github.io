@@ -1,5 +1,6 @@
 
 # 📖 Educations
+- *2026.08 - Present*, Ph.D. Student, The Chinese University of Hong Kong, Hong Kong.
 - *2022.09 - 2026.06*, Undergraduate, Huazhong University of Science and Technology, Wuhan.
 
 # 💻 Internships
