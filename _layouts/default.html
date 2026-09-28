@@ -1,33 +1,61 @@
----
-layout: compress
----
-
 <!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    {% include head.html %}
-    {% include head/custom.html %}
-  </head>
-
-  <body>
-
-    {% include browser-upgrade.html %}
-    {% include masthead.html %}
-
-    <div id="main" role="main">
-      {% include sidebar.html %}
-    
-      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
-        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
-        <div class="page__inner-wrap">
-          <section class="page__content" itemprop="text">
-            {{ content }}
-          </section>
-        </div>
-      </article>
-    </div>
-
-    {% include scripts.html %}
-
-  </body>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.title }}</title>
+<meta name="description" content="{{ page.motto }}">
+<meta name="theme-color" content="#07080b">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ '/images/favicon-32x32.png' | relative_url }}">
+<link rel="apple-touch-icon" href="{{ '/images/apple-touch-icon.png' | relative_url }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif@5/400-italic.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/figtree@5/index.css">
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+<base target="_blank">
+<script>document.documentElement.className = 'js'</script>
+</head>
+<body>
+{% assign n = page.milestones.size | minus: 1 | at_least: 1 %}{% assign jitter = '0,3,-2,4,-3,2,-4,3,-1,0' | split: ',' %}
+{% capture stars %}{% for m in page.milestones %}{% assign i = forloop.index0 %}{% assign j = i | modulo: jitter.size %}
+  {% assign x = i | times: 84.6 | divided_by: n | plus: 7 | round: 2 %}{% assign y = i | times: -68.4 | divided_by: n | plus: 86 | plus: jitter[j] | round: 2 %}{% capture points %}{{ points }} {{ x }},{{ y }}{% endcapture %}
+  <div class="star{% if m.big %} big{% endif %}" style="left:{{ x }}%;top:{{ y }}%;animation-delay:{{ i | times: 0.22 | plus: 0.3 | round: 2 }}s"><i></i><span><b>{{ m.date }}</b>{{ m.text }}</span></div>{% endfor %}{% endcapture %}
+<header class="sky">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="{{ points | strip }}"/></svg>{{ stars }}
+  <div class="title">
+    <h1>{{ page.title }}</h1>
+    <p class="motto">{{ page.motto }}</p>
+    <nav>{% for l in page.links %}<a href="{{ l[1] }}">{{ l[0] }}</a>{% endfor %}<a href="{{ page.gallery.url }}">{{ page.gallery.title }} ↗</a></nav>
+  </div>
+</header>
+{% assign sections = content | split: '<h2' %}{% assign reel = page.gallery.title | slugify %}
+{% capture rows %}{% for s in sections offset: 1 %}{% assign head = s | split: '</h2>' | first %}{% assign title = head | split: '>' | last %}{% assign id = head | split: '"' %}{% assign m = page.margin[title] %}{% capture tabs %}{{ tabs }}<a href="#{{ id[1] }}" target="_self">{{ title }}</a>{% endcapture %}
+  <div class="row"><section><h2{{ s | replace: '<li><em>', '<li class="dated"><em>' }}</section><aside>{% if m %}{% if m.photo %}{% include photo.html p=m %}{% endif %}{{ m.note | markdownify }}{% endif %}</aside></div>{% endfor %}{% endcapture %}
+<nav class="bar" aria-label="Sections"><a class="home" href="#" target="_self">{{ page.title }}</a><div class="tabs">{{ tabs }}<a class="m" href="#{{ reel }}" target="_self">{{ page.gallery.title }}</a></div></nav>
+<main class="body">{{ rows }}
+  <section class="reel">
+    <h2 id="{{ reel }}">{{ page.gallery.title }}</h2>
+    <div class="track">{% for m in page.margin %}{% assign p = m[1] %}{% if p.photo %}{% include photo.html p=p %}{% endif %}{% endfor %}</div>
+    {% for m in page.margin %}{{ m[1].note | markdownify }}{% endfor %}
+  </section>
+</main>
+<script>
+document.querySelector('.sky').insertAdjacentHTML('afterbegin', Array.from({length: 90}, () =>
+  `<i class="dust" style="left:${Math.random() * 100}%;top:${Math.random() * 100}%;opacity:${.12 + Math.random() * .45};transform:scale(${.5 + Math.random()})"></i>`).join(''));
+const reveal = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add('seen'), reveal.unobserve(e.target))), {rootMargin: '0px 0px -10% 0px'});
+document.querySelectorAll('aside figure').forEach(f => reveal.observe(f));
+const bar = document.querySelector('.bar'), links = document.querySelector('.title nav'), tabs = [...bar.querySelectorAll('.tabs a')], rows = [...document.querySelectorAll('.row, .reel')];
+let active;
+const spy = () => {
+  bar.classList.toggle('show', links.getBoundingClientRect().bottom < 0);
+  const shown = rows.filter(r => r.offsetParent), end = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
+  const id = (end ? shown.at(-1) : shown.filter(r => r.getBoundingClientRect().top < innerHeight * .35).at(-1))?.querySelector('h2').id;
+  if (id === active) return;
+  active = id;
+  tabs.forEach(a => a.classList.toggle('on', a.hash === '#' + id) && a.parentNode.scrollTo({left: a.offsetLeft - 24, behavior: 'smooth'}));
+};
+addEventListener('scroll', spy, {passive: true});
+spy();
+</script>
+</body>
 </html>
