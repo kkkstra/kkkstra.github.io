@@ -11,7 +11,7 @@ links:          # shown under the name, in this order
   CV: /assets/CV.pdf
 gallery:        # added to the links; every photo links here, and on phones the photos gather into one swipeable row
   title: Photography
-  url: https://gallery-tau-ten.vercel.app
+  url: https://gallery.yuxinlai.com
 milestones:     # the constellation, oldest first; big: true draws a brighter star. Quote dates so "2025.10" stays 2025.10
   - {date: "2019.12", text: "NOIP, First Prize"}
   - {date: "2022.09", text: "B.Eng., HUST", big: true}
@@ -31,7 +31,7 @@ margin:         # right-hand margin, keyed by the "## " heading it sits beside: 
       LUMIX S5M2 · 60 mm
       ƒ/10 · 8 s · ISO 100
   News:
-    note: Outside research, I take photographs. More of them live in [Ethan’s Gallery ↗](https://gallery-tau-ten.vercel.app).
+    note: Outside research, I take photographs. More of them live in [Ethan’s Gallery ↗](https://gallery.yuxinlai.com).
   Publications:
     photo: https://gallery-lyx.oss-cn-hangzhou.aliyuncs.com/thumbs/2026/04/4f7553a9-b1e7-4de0-a3bd-421d33b3c58d-DSC_2060-___-__.jpg
     alt: The national emblem on Tiananmen at night

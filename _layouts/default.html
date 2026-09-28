@@ -19,7 +19,7 @@
 {% assign n = page.milestones.size | minus: 1 | at_least: 1 %}{% assign jitter = '0,3,-2,4,-3,2,-4,3,-1,0' | split: ',' %}
 {% capture stars %}{% for m in page.milestones %}{% assign i = forloop.index0 %}{% assign j = i | modulo: jitter.size %}
   {% assign x = i | times: 84.6 | divided_by: n | plus: 7 | round: 2 %}{% assign y = i | times: -68.4 | divided_by: n | plus: 86 | plus: jitter[j] | round: 2 %}{% capture points %}{{ points }} {{ x }},{{ y }}{% endcapture %}
-  <div class="star{% if m.big %} big{% endif %}" style="left:{{ x }}%;top:{{ y }}%;animation-delay:{{ i | times: 0.22 | plus: 0.3 | round: 2 }}s"><i></i><span><b>{{ m.date }}</b>{{ m.text }}</span></div>{% endfor %}{% endcapture %}
+  <div class="star{% if m.big %} big{% endif %}" style="left:{{ x }}%;top:{{ y }}%;animation-delay:{{ i | times: 0.22 | plus: 0.3 | round: 2 }}s;--tw:{{ i | times: 7 | modulo: 5 | plus: 4 }}s;--td:-{{ i | times: 1.3 | round: 1 }}s"><i></i><span><b>{{ m.date }}</b>{{ m.text }}</span></div>{% endfor %}{% endcapture %}
 <header class="sky">
   <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="{{ points | strip }}"/></svg>{{ stars }}
   <div class="title">
