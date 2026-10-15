@@ -37,7 +37,7 @@ gallery:        # /photography: the photos (each links to url; focus = crop anch
       caption: |
         LUMIX S5M2 · 60 mm
         ƒ/8 · 1/320 s · ISO 100
-milestones:     # /timeline, oldest first; the newest three also show under "Recent activity". Quote dates so "2025.10" stays 2025.10
+milestones:     # oldest first; the newest three show under "Recent activity" in the welcome box. Quote dates so "2025.10" stays 2025.10
   - {date: "2019.12", text: "NOIP, First Prize"}
   - {date: "2022.09", text: "B.Eng., HUST"}
   - {date: "2023.12", text: "National Scholarship"}

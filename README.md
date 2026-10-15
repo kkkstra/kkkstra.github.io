@@ -16,7 +16,7 @@
 | `avatar` | 个人照片，显示在第一节的回答旁边；删掉这一行就不显示 |
 | `links` | `/contact` 列出的链接，按书写顺序显示 |
 | `gallery` | 摄影网站：`title`、`url` 是名称和地址（`/contact` 末尾也会列出）；`photos` 是 `/photography` 展示的照片（`photo`、`alt`、`caption`，可选的裁切位置 `focus`），都链接到 `url`；`note` 是照片下面的一段 Markdown |
-| `milestones` | `/timeline` 的待办清单，从早到晚排列；最新三条也显示在欢迎框的 Recent activity 里 |
+| `milestones` | 欢迎框 Recent activity 里的近况，从早到晚排列，只显示最新三条 |
 
 YAML 里的日期要加引号（`"2025.10"`），否则会被读成数字 2025.1。
 

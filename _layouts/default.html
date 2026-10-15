@@ -46,9 +46,6 @@
       <div class="turn"><p class="you">&gt; /contact</p><section class="say links" data-cmd="contact" data-title="Contact" data-kind="links" data-desc="{% for l in page.links %}{{ l[0] }}{% unless forloop.last %}, {% endunless %}{% endfor %}">
         <ul>{% for l in page.links %}<li><a href="{{ l[1] }}"><b>{{ l[0] }}</b><span>{{ l[1] | remove: 'mailto:' | remove: 'https://' }}</span></a></li>{% endfor %}<li><a href="{{ page.gallery.url }}"><b>{{ page.gallery.title }}</b><span>{{ page.gallery.url | remove: 'https://' }}</span></a></li></ul>
       </section></div>
-      <div class="turn"><p class="you">&gt; /timeline</p><section class="say todos" data-cmd="timeline" data-title="Timeline" data-kind="todos" data-desc="{{ page.milestones.size }} milestones so far">
-        <ul>{% for m in page.milestones %}<li>☒ <em>{{ m.date }}</em>  {{ m.text }}</li>{% endfor %}<li class="todo">☐ {{ page.motto }}</li></ul>
-      </section></div>
     </div>
     <form class="input" id="prompt"><span class="dim">&gt;</span><input id="q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="Press ↵ for everything · / for commands" aria-label="Type a command or a question"></form>
     <div class="menu" id="menu" hidden></div>
@@ -57,10 +54,10 @@
   </div>
 </div>
 <script>
-const $ = s => document.querySelector(s), root = document.documentElement, log = $('#log'), q = $('#q'), menu = $('#menu'), keys = $('#keys');
+const $ = s => document.querySelector(s), root = document.documentElement, term = $('.term'), log = $('#log'), q = $('#q'), menu = $('#menu'), keys = $('#keys');
 const lib = [...document.querySelectorAll('#lib section')];
 const cmds = [['all', 'Show everything at once'], ...lib.map(s => [s.dataset.cmd, s.dataset.desc]), ['help', 'List everything I can show you'], ['theme', 'Switch between light and dark'], ['clear', 'Clear the conversation']];
-const hints = [['publications', /paper|publication|kunserve|eurosys/], ['{{ gallery }}', /photo|camera|gallery|picture/], ['honors', /award|honou?r|prize|scholarship/], ['education', /school|stud|degree|universit|educat|phd|bachelor/], ['internships', /intern|job|seed|ipads|industry/], ['news', /news|recent|latest|update/], ['contact', /contact|e-?mail|reach|github|scholar|\bcv\b|resume/], ['timeline', /timeline|history|journey|milestone/], ['all', /everything|\ball\b|full|whole/], ['help', /help|what can/], ['about', /who|yourself|research|interest|working on|about/]];
+const hints = [['publications', /paper|publication|kunserve|eurosys/], ['{{ gallery }}', /photo|camera|gallery|picture/], ['honors', /award|honou?r|prize|scholarship/], ['education', /school|stud|degree|universit|educat|phd|bachelor/], ['internships', /intern|job|seed|ipads|industry/], ['news', /news|recent|latest|update/], ['contact', /contact|e-?mail|reach|github|scholar|\bcv\b|resume/], ['all', /everything|\ball\b|full|whole/], ['help', /help|what can/], ['about', /who|yourself|research|interest|working on|about/]];
 const verbs = ['Thinking', 'Pondering', 'Stargazing', 'Musing', 'Recollecting'], hist = [], fine = matchMedia('(pointer: fine)').matches;
 let hi = 0, sel = 0, busy = false;
 const el = (cls, html = '') => Object.assign(document.createElement('div'), {className: cls, innerHTML: html});
@@ -85,7 +82,6 @@ const reply = (name, t) => {
   }
   const s = lib.find(x => x.dataset.cmd === name), body = s.cloneNode(true), n = body.querySelectorAll('p,li,h3').length;
   if (s.dataset.kind === 'links') return [body];
-  if (s.dataset.kind === 'todos') { const r = el('res'); body.classList.remove('say'); r.append(body); return [el('tool', '<b>Update Todos</b>'), r]; }
   if (s.dataset.kind === 'photos') return [el('tool', `<b>Fetch</b>(${s.dataset.src})`), el('res', `Received ${body.querySelectorAll('figure').length} photos`), body];
   return [el('tool', `<b>Read</b>(index.md#${name})`), el('res', `Read ${n} line${n > 1 ? 's' : ''}`), body];
 };
@@ -104,9 +100,9 @@ const run = async (raw, quiet) => {
   reply(name, t).forEach((n, i) => { n.style.animationDelay = i * 90 + 'ms'; turn.append(n); });
   busy = false;
   if (quiet) return;
-  const r = turn.getBoundingClientRect();
-  if (r.height > innerHeight * .7) turn.scrollIntoView({behavior: 'smooth'});
-  else if (r.bottom + 120 > innerHeight) scrollBy({top: r.bottom + 120 - innerHeight, behavior: 'smooth'});
+  const r = turn.getBoundingClientRect(), {bottom, height} = term.getBoundingClientRect();
+  if (r.height > height * .7) turn.scrollIntoView({behavior: 'smooth'});
+  else if (r.bottom + 120 > bottom) term.scrollBy({top: r.bottom + 120 - bottom, behavior: 'smooth'});
 };
 function suggest() {
   const v = q.value.toLowerCase(), opts = v.startsWith('/') && !v.includes(' ') ? cmds.filter(([c]) => c.startsWith(v.slice(1))) : [];
@@ -134,6 +130,7 @@ document.addEventListener('click', e => {
   if (b) return e.preventDefault(), run(b.dataset.run);
   if (fine && e.target.closest('.term') && !e.target.closest('a,button,input') && !getSelection().toString()) q.focus({preventScroll: true});
 });
+addEventListener('wheel', e => e.target.closest('.win') || term.scrollBy(e.deltaX, e.deltaY), {passive: true});
 (async () => {
   const first = '/' + lib[0].dataset.cmd;
   await sleep(500);
