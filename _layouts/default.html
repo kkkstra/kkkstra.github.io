@@ -5,57 +5,143 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ page.title }}</title>
 <meta name="description" content="{{ page.motto }}">
-<meta name="theme-color" content="#07080b">
+<meta name="theme-color" content="#efece4">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ '/images/favicon-32x32.png' | relative_url }}">
 <link rel="apple-touch-icon" href="{{ '/images/apple-touch-icon.png' | relative_url }}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif@5/400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif@5/400-italic.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/figtree@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5/wght-italic.css">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 <base target="_blank">
-<script>document.documentElement.className = 'js'</script>
+<script>document.documentElement.className = 'js'; document.documentElement.dataset.theme = localStorage.theme || 'light'</script>
 </head>
 <body>
-{% assign n = page.milestones.size | minus: 1 | at_least: 1 %}{% assign jitter = '0,3,-2,4,-3,2,-4,3,-1,0' | split: ',' %}
-{% capture stars %}{% for m in page.milestones %}{% assign i = forloop.index0 %}{% assign j = i | modulo: jitter.size %}
-  {% assign x = i | times: 84.6 | divided_by: n | plus: 7 | round: 2 %}{% assign y = i | times: -68.4 | divided_by: n | plus: 86 | plus: jitter[j] | round: 2 %}{% capture points %}{{ points }} {{ x }},{{ y }}{% endcapture %}
-  <div class="star{% if m.big %} big{% endif %}" style="left:{{ x }}%;top:{{ y }}%;animation-delay:{{ i | times: 0.22 | plus: 0.3 | round: 2 }}s;--tw:{{ i | times: 7 | modulo: 5 | plus: 4 }}s;--td:-{{ i | times: 1.3 | round: 1 }}s"><i></i><span><b>{{ m.date }}</b>{{ m.text }}</span></div>{% endfor %}{% endcapture %}
-<header class="sky">
-  <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="{{ points | strip }}"/></svg>{{ stars }}
-  <div class="title">
-    <h1>{{ page.title }}</h1>
-    <p class="motto">{{ page.motto }}</p>
-    <nav>{% for l in page.links %}<a href="{{ l[1] }}">{{ l[0] }}</a>{% endfor %}<a href="{{ page.gallery.url }}">{{ page.gallery.title }} ↗</a></nav>
+{% assign host = site.url | remove: 'https://' | remove: 'http://' %}{% assign sections = content | split: '<h2' %}{% assign recent = page.milestones.size | minus: 3 | at_least: 0 %}{% assign gallery = page.gallery.title | slugify %}
+<div class="win">
+  <div class="bar"><i></i><i></i><i></i><span>~/{{ host }} — claude</span></div>
+  <div class="term">
+    <div class="welcome">
+      <p class="ttl">{{ page.title }} <span>v{{ site.time | date: '%Y.%-m' }}</span></p>
+      <div class="hello">
+        <b>Welcome, visitor!</b>
+        <svg class="mascot" width="84" height="63" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h4v1H3zM9 0h1v1H9zM1 1h10v1H1zM0 2h12v5H0zM1 7h10v1H1zM2 8h1v1H2zM9 8h1v1H9z"/><path class="hole" d="M1 3h1v1H1zM4 3h4v1H4zM3 4h6v2H3zM4 6h4v1H4z"/><rect class="iris" x="5" y="4" width="2" height="2"/></svg>
+        <p class="dim">{{ page.motto }}</p>
+        <p class="dim">~/{{ host }}</p>
+      </div>
+      <div class="tips">
+        <h2>Tips for getting started</h2>
+        <p><button class="go" data-run="/all">↵ Show everything</button> <span class="dim">or explore piece by piece:</span></p>
+        <p>Run <button data-run="/help">/help</button> for commands, or ask, e.g. <button data-run="what are you working on?">what are you working on?</button></p>
+        <hr>
+        <h2>Recent activity</h2>
+        {% for m in page.milestones reversed offset: recent %}<p><span class="dim">{{ m.date }}</span>  {{ m.text }}</p>{% endfor %}
+      </div>
+    </div>
+    <div id="log" aria-live="polite"></div>
+    <div id="lib">{% for s in sections offset: 1 %}{% assign head = s | split: '</h2>' | first %}{% assign id = head | split: '"' %}{% assign body = s | remove_first: head | remove_first: '</h2>' %}
+      <div class="turn"><p class="you">&gt; /{{ id[1] }}</p><section class="say" data-cmd="{{ id[1] }}" data-title="{{ head | split: '>' | last }}" data-desc="{{ body | strip_html | normalize_whitespace | truncate: 60, '…' | escape }}">{% if forloop.first and page.avatar %}<figure class="me"><img src="{{ page.avatar | relative_url }}" alt="{{ page.title }}"><figcaption>[Image #1]</figcaption></figure>{% endif %}{{ body | replace: '<li><em>', '<li class="dated"><em>' }}</section></div>{% endfor %}
+      <div class="turn"><p class="you">&gt; /{{ gallery }}</p><section class="say" data-cmd="{{ gallery }}" data-title="{{ page.gallery.title }}" data-kind="photos" data-src="{{ page.gallery.url | remove: 'https://' }}" data-desc="A few photographs; more in the gallery">
+        <div class="photos">{% for p in page.gallery.photos %}{% include photo.html p=p %}{% endfor %}</div>
+        {{ page.gallery.note | markdownify }}
+      </section></div>
+      <div class="turn"><p class="you">&gt; /contact</p><section class="say links" data-cmd="contact" data-title="Contact" data-kind="links" data-desc="{% for l in page.links %}{{ l[0] }}{% unless forloop.last %}, {% endunless %}{% endfor %}">
+        <ul>{% for l in page.links %}<li><a href="{{ l[1] }}"><b>{{ l[0] }}</b><span>{{ l[1] | remove: 'mailto:' | remove: 'https://' }}</span></a></li>{% endfor %}<li><a href="{{ page.gallery.url }}"><b>{{ page.gallery.title }}</b><span>{{ page.gallery.url | remove: 'https://' }}</span></a></li></ul>
+      </section></div>
+      <div class="turn"><p class="you">&gt; /timeline</p><section class="say todos" data-cmd="timeline" data-title="Timeline" data-kind="todos" data-desc="{{ page.milestones.size }} milestones so far">
+        <ul>{% for m in page.milestones %}<li>☒ <em>{{ m.date }}</em>  {{ m.text }}</li>{% endfor %}<li class="todo">☐ {{ page.motto }}</li></ul>
+      </section></div>
+    </div>
+    <form class="input" id="prompt"><span class="dim">&gt;</span><input id="q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="Press ↵ for everything · / for commands" aria-label="Type a command or a question"></form>
+    <div class="menu" id="menu" hidden></div>
+    <div class="status"><p><button data-run="/all">↵ show everything</button><button id="toggle">&nbsp;· ? for shortcuts</button></p><button id="mode" data-run="/theme">⏵⏵ <b>light</b> mode on <span>(/theme to switch)</span></button></div>
+    <div class="keys" id="keys"></div>
   </div>
-</header>
-{% assign sections = content | split: '<h2' %}{% assign reel = page.gallery.title | slugify %}
-{% capture rows %}{% for s in sections offset: 1 %}{% assign head = s | split: '</h2>' | first %}{% assign title = head | split: '>' | last %}{% assign id = head | split: '"' %}{% assign m = page.margin[title] %}{% capture tabs %}{{ tabs }}<a href="#{{ id[1] }}" target="_self">{{ title }}</a>{% endcapture %}
-  <div class="row"><section><h2{{ s | replace: '<li><em>', '<li class="dated"><em>' }}</section><aside>{% if m %}{% if m.photo %}{% include photo.html p=m %}{% endif %}{{ m.note | markdownify }}{% endif %}</aside></div>{% endfor %}{% endcapture %}
-<nav class="bar" aria-label="Sections"><a class="home" href="#" target="_self">{{ page.title }}</a><div class="tabs">{{ tabs }}<a class="m" href="#{{ reel }}" target="_self">{{ page.gallery.title }}</a></div></nav>
-<main class="body">{{ rows }}
-  <section class="reel">
-    <h2 id="{{ reel }}">{{ page.gallery.title }}</h2>
-    <div class="track">{% for m in page.margin %}{% assign p = m[1] %}{% if p.photo %}{% include photo.html p=p %}{% endif %}{% endfor %}</div>
-    {% for m in page.margin %}{{ m[1].note | markdownify }}{% endfor %}
-  </section>
-</main>
+</div>
 <script>
-document.querySelector('.sky').insertAdjacentHTML('afterbegin', Array.from({length: 90}, () =>
-  `<i class="dust" style="left:${Math.random() * 100}%;top:${Math.random() * 100}%;opacity:${.12 + Math.random() * .45};transform:scale(${.5 + Math.random()})"></i>`).join(''));
-const reveal = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && (e.target.classList.add('seen'), reveal.unobserve(e.target))), {rootMargin: '0px 0px -10% 0px'});
-document.querySelectorAll('aside figure').forEach(f => reveal.observe(f));
-const bar = document.querySelector('.bar'), links = document.querySelector('.title nav'), tabs = [...bar.querySelectorAll('.tabs a')], rows = [...document.querySelectorAll('.row, .reel')];
-let active;
-const spy = () => {
-  bar.classList.toggle('show', links.getBoundingClientRect().bottom < 0);
-  const shown = rows.filter(r => r.offsetParent), end = innerHeight + scrollY >= document.documentElement.scrollHeight - 4;
-  const id = (end ? shown.at(-1) : shown.filter(r => r.getBoundingClientRect().top < innerHeight * .35).at(-1))?.querySelector('h2').id;
-  if (id === active) return;
-  active = id;
-  tabs.forEach(a => a.classList.toggle('on', a.hash === '#' + id) && a.parentNode.scrollTo({left: a.offsetLeft - 24, behavior: 'smooth'}));
+const $ = s => document.querySelector(s), root = document.documentElement, log = $('#log'), q = $('#q'), menu = $('#menu'), keys = $('#keys');
+const lib = [...document.querySelectorAll('#lib section')];
+const cmds = [['all', 'Show everything at once'], ...lib.map(s => [s.dataset.cmd, s.dataset.desc]), ['help', 'List everything I can show you'], ['theme', 'Switch between light and dark'], ['clear', 'Clear the conversation']];
+const hints = [['publications', /paper|publication|kunserve|eurosys/], ['{{ gallery }}', /photo|camera|gallery|picture/], ['honors', /award|honou?r|prize|scholarship/], ['education', /school|stud|degree|universit|educat|phd|bachelor/], ['internships', /intern|job|seed|ipads|industry/], ['news', /news|recent|latest|update/], ['contact', /contact|e-?mail|reach|github|scholar|\bcv\b|resume/], ['timeline', /timeline|history|journey|milestone/], ['all', /everything|\ball\b|full|whole/], ['help', /help|what can/], ['about', /who|yourself|research|interest|working on|about/]];
+const verbs = ['Thinking', 'Pondering', 'Stargazing', 'Musing', 'Recollecting'], hist = [], fine = matchMedia('(pointer: fine)').matches;
+let hi = 0, sel = 0, busy = false;
+const el = (cls, html = '') => Object.assign(document.createElement('div'), {className: cls, innerHTML: html});
+const esc = s => s.replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
+const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
+const has = name => cmds.some(([c]) => c === name);
+const resolve = t => {
+  if (!t.startsWith('/')) return hints.find(([c, re]) => has(c) && re.test(t.toLowerCase()))?.[0];
+  const n = t.slice(1).toLowerCase().trim();
+  return n && (cmds.find(([c]) => c === n) ?? cmds.find(([c]) => c.startsWith(n)))?.[0];
 };
-addEventListener('scroll', spy, {passive: true});
-spy();
+const setTheme = t => { root.dataset.theme = localStorage.theme = t; $('#mode b').textContent = t; };
+const reply = (name, t) => {
+  const help = `<button data-run="/help">/help</button>`;
+  if (!name) return [el('say', t.startsWith('/') ? `<p>Unknown command: ${esc(t)}. Try ${help}.</p>` : `<p>I’m a static homepage, so that one is beyond me. Try ${help} to see what I can show you.</p>`)];
+  if (name === 'help') return [el('say', `<p>Here’s what I can show you:</p><div class="cmds">${cmds.map(([c, d]) => `<button data-run="/${c}"><b>/${c}</b><span>${d}</span></button>`).join('')}</div><p class="dim">You can also ask in plain words, like “what are you working on?”</p>`)];
+  if (name === 'theme') return setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'), [el('res', `Theme set to ${root.dataset.theme}`)];
+  if (name === 'all') {
+    const all = el('say');
+    lib.forEach(s => { const b = s.cloneNode(true); b.classList.remove('say'); all.append(el('sec', s.dataset.title), b); });
+    return [el('tool', '<b>Read</b>(index.md)'), el('res', `Read ${lib.length} sections`), all];
+  }
+  const s = lib.find(x => x.dataset.cmd === name), body = s.cloneNode(true), n = body.querySelectorAll('p,li,h3').length;
+  if (s.dataset.kind === 'links') return [body];
+  if (s.dataset.kind === 'todos') { const r = el('res'); body.classList.remove('say'); r.append(body); return [el('tool', '<b>Update Todos</b>'), r]; }
+  if (s.dataset.kind === 'photos') return [el('tool', `<b>Fetch</b>(${s.dataset.src})`), el('res', `Received ${body.querySelectorAll('figure').length} photos`), body];
+  return [el('tool', `<b>Read</b>(index.md#${name})`), el('res', `Read ${n} line${n > 1 ? 's' : ''}`), body];
+};
+const run = async (raw, quiet) => {
+  const t = raw.trim();
+  q.value = ''; suggest();
+  if (!t || busy) return;
+  hist.push(t); hi = hist.length; busy = true;
+  const name = resolve(t);
+  if (name === 'clear') return log.replaceChildren(), busy = false;
+  const turn = el('turn'), spin = el('spin'), verb = name === '{{ gallery }}' ? 'Developing' : verbs[Math.random() * verbs.length | 0];
+  turn.append(el('you', '&gt; ' + esc(t)), spin);
+  log.append(turn);
+  for (let i = 0; i < 10; i++) { spin.innerHTML = `<b>${'·✢✳✶✻✽✻✶✳✢'[i]}</b>${verb}… <span class="dim">(esc to interrupt)</span>`; await sleep(75); }
+  spin.remove();
+  reply(name, t).forEach((n, i) => { n.style.animationDelay = i * 90 + 'ms'; turn.append(n); });
+  busy = false;
+  if (quiet) return;
+  const r = turn.getBoundingClientRect();
+  if (r.height > innerHeight * .7) turn.scrollIntoView({behavior: 'smooth'});
+  else if (r.bottom + 120 > innerHeight) scrollBy({top: r.bottom + 120 - innerHeight, behavior: 'smooth'});
+};
+function suggest() {
+  const v = q.value.toLowerCase(), opts = v.startsWith('/') && !v.includes(' ') ? cmds.filter(([c]) => c.startsWith(v.slice(1))) : [];
+  sel = Math.min(sel, Math.max(opts.length - 1, 0));
+  menu.hidden = !opts.length;
+  menu.innerHTML = opts.map(([c, d], i) => `<button type="button" data-run="/${c}"${i === sel ? ' class="on"' : ''}>/${c}<span>${d}</span></button>`).join('');
+}
+keys.innerHTML = cmds.map(([c]) => `<button data-run="/${c}">/${c}</button>`).join('') + '<p>↑↓ history · tab to complete · ? to toggle this list</p>';
+$('#mode b').textContent = root.dataset.theme;
+$('#toggle').onclick = () => keys.hidden = !keys.hidden;
+$('#prompt').onsubmit = e => { e.preventDefault(); run(menu.hidden ? q.value.trim() || '/all' : menu.querySelector('.on').dataset.run); };
+q.oninput = () => { sel = 0; suggest(); };
+q.onkeydown = e => {
+  const opts = menu.hidden ? [] : [...menu.children], step = {ArrowDown: 1, ArrowUp: -1}[e.key];
+  if (opts.length && step) sel = (sel + step + opts.length) % opts.length, suggest();
+  else if (opts.length && e.key === 'Tab') q.value = opts[sel].dataset.run, suggest();
+  else if (e.key === 'Escape') menu.hidden = keys.hidden = true;
+  else if (e.key === '?' && !q.value) keys.hidden = !keys.hidden;
+  else if (step && hist.length) hi = Math.max(0, Math.min(hist.length, hi + step)), q.value = hist[hi] ?? '';
+  else return;
+  e.preventDefault();
+};
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-run]');
+  if (b) return e.preventDefault(), run(b.dataset.run);
+  if (fine && e.target.closest('.term') && !e.target.closest('a,button,input') && !getSelection().toString()) q.focus({preventScroll: true});
+});
+(async () => {
+  const first = '/' + lib[0].dataset.cmd;
+  await sleep(500);
+  for (const c of first) { q.value += c; suggest(); await sleep(80); }
+  await sleep(300);
+  await run(first, true);
+  if (fine) q.focus({preventScroll: true});
+})();
 </script>
 </body>
 </html>

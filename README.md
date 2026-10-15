@@ -1,6 +1,6 @@
 # Yuxin Lai 的个人主页
 
-[yuxinlai.com](https://yuxinlai.com) 的源码。基于 Jekyll，由 GitHub Pages 自动构建发布。
+[yuxinlai.com](https://yuxinlai.com) 的源码。基于 Jekyll，由 GitHub Pages 自动构建发布。页面是一个仿 Claude Code 的可交互终端：访客可以输入斜杠命令或直接提问，也可以点 **Show everything** 一次看完全部内容。
 
 <img src="docs/screenshot.png" width="100%">
 
@@ -12,21 +12,21 @@
 
 | 字段 | 作用 |
 | --- | --- |
-| `title`、`motto` | 首屏的名字和格言，也用作网页标题和描述 |
-| `links` | 名字下方的链接，按书写顺序显示 |
-| `gallery` | 摄影网站的名称和地址，自动加到链接末尾，所有照片都链接到这里 |
-| `milestones` | 首屏星座上的节点，从早到晚排列；`big: true` 画一颗更亮的星 |
-| `margin` | 正文右侧页边的内容，按节标题对应：照片（`photo`、`alt`、`caption`，可选的裁切位置 `focus`）或一段 Markdown 注释（`note`） |
+| `title`、`motto` | 欢迎框里的名字和格言，也用作网页标题和描述 |
+| `avatar` | 个人照片，显示在第一节的回答旁边；删掉这一行就不显示 |
+| `links` | `/contact` 列出的链接，按书写顺序显示 |
+| `gallery` | 摄影网站：`title`、`url` 是名称和地址（`/contact` 末尾也会列出）；`photos` 是 `/photography` 展示的照片（`photo`、`alt`、`caption`，可选的裁切位置 `focus`），都链接到 `url`；`note` 是照片下面的一段 Markdown |
+| `milestones` | `/timeline` 的待办清单，从早到晚排列；最新三条也显示在欢迎框的 Recent activity 里 |
 
 YAML 里的日期要加引号（`"2025.10"`），否则会被读成数字 2025.1。
 
 正文是普通 Markdown：
 
-- 每个 `## 标题` 是一节，对应页面上的一行，也会自动出现在顶部导航栏里。
+- 每个 `## 标题` 是一节，会自动变成一条斜杠命令（`## News` 对应 `/news`），命令菜单里的说明取自这一节的开头。打开页面时会自动执行第一节。
 - 以斜体日期开头的列表项，日期会排进左侧的日期栏，例如 `- *2025.08* KunServe is accepted by EuroSys 2026!`。
 - 论文写成 `### [标题](链接)`，紧跟的一段（作者、会议）显示为灰色小字。
 
-在手机上，页边的照片会集中到页面末尾，排成一行横向滑动。
+除了各节，页面还有几条固定命令：`/all`（或在空输入框按回车）展示全部内容，`/help` 列出所有命令，`/theme` 切换深浅色（会记住选择），`/clear` 清空对话。访客直接用英文提问时，会按关键词匹配到对应的节，例如 “any papers?” 显示 Publications；关键词写在 `_layouts/default.html` 的 `hints` 里，新增一节后如果想让提问也能找到它，在那里加一行。
 
 ## 本地预览
 
@@ -46,11 +46,11 @@ bash run_server.sh   # 打开 http://127.0.0.1:4000，保存文件后页面自�
 | 文件 | 内容 |
 | --- | --- |
 | `index.md` | 主页的全部内容 |
-| `_layouts/default.html` | 页面结构：星空首屏、导航栏、正文和页边 |
+| `_layouts/default.html` | 页面结构和交互脚本：欢迎框、命令、对话记录 |
 | `_includes/photo.html` | 带拍摄参数的照片 |
-| `assets/css/main.css` | 样式 |
+| `assets/css/main.css` | 样式，含浅色和深色两套配色 |
 | `_config.yml` | 站点设置：域名、Markdown、插件 |
-| `assets/CV.pdf`、`images/` | 简历、头像和网站图标 |
+| `assets/CV.pdf`、`images/` | 简历、个人照片和网站图标 |
 
 ## 致谢
 
