@@ -53,6 +53,7 @@
     <div class="keys" id="keys"></div>
   </div>
 </div>
+<div class="desk">{% for p in page.gallery.photos %}{% include photo.html p=p %}{% endfor %}{{ page.gallery.note | markdownify }}</div>
 <button class="dock" title="{{ page.title }}">{{ mascot }}</button>
 <script>
 const $ = s => document.querySelector(s), root = document.documentElement, win = $('.win'), term = $('.term'), log = $('#log'), q = $('#q'), menu = $('#menu'), keys = $('#keys');

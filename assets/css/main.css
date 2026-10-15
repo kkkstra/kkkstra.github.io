@@ -10,14 +10,20 @@ p{margin:0}
 strong{font-weight:700}
 .dim{color:var(--dim)}
 
-.win{--gap:clamp(16px,5vh,48px);display:flex;flex-direction:column;width:min(1080px,100% - 2*var(--gap));height:calc(100dvh - 2*var(--gap));margin:var(--gap) auto;border:1px solid var(--line);border-radius:12px;background:var(--win);box-shadow:0 30px 80px -40px rgb(0 0 0 / .28);overflow:hidden;transform-origin:50% 100%;transition:.45s}
+.win{--gap:clamp(16px,5vh,48px);position:relative;z-index:1;display:flex;flex-direction:column;width:min(1080px,100% - 2*var(--gap));height:calc(100dvh - 2*var(--gap));margin:var(--gap) auto;border:1px solid var(--line);border-radius:12px;background:var(--win);box-shadow:0 30px 80px -40px rgb(0 0 0 / .28);overflow:hidden;transform-origin:50% 100%;transition:.45s}
 .win:is(.min,.closed){opacity:0;visibility:hidden}
 .min{transform:scale(.05)}
 .closed{transform:scale(.95)}
 .full{--gap:0px;width:100%;border:0;border-radius:0}
 .dock{position:fixed;bottom:14px;left:50%;display:grid;place-items:center;width:58px;height:58px;border:1px solid var(--line);border-radius:14px;background:var(--win);box-shadow:0 12px 30px -12px rgb(0 0 0 / .35);translate:-50% 0;transition:translate .45s,opacity .45s,visibility .45s}
-.win:not(.min,.closed)+.dock{translate:-50% 150%;opacity:0;visibility:hidden}
+.win:not(.min,.closed)~.dock{translate:-50% 150%;opacity:0;visibility:hidden}
 .dock .mascot{width:36px;height:27px;margin:0}
+.desk{position:fixed;inset:0;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:28px;padding:48px 48px 110px;transition:.45s}
+.win:not(.min,.closed)~.desk{opacity:0;visibility:hidden;scale:.97}
+.desk figure{width:min(250px,18vw);padding:10px 10px 12px;border-radius:6px;background:var(--win);box-shadow:0 18px 40px -20px rgb(0 0 0 / .45);rotate:-3deg;transition:.3s}
+.desk figure:nth-child(even){rotate:2.5deg;translate:0 14px}
+.desk figure:hover{rotate:0deg;scale:1.04}
+.desk p{flex-basis:100%;color:var(--dim);text-align:center}
 .bar{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--bar);color:var(--dim);font-size:12.5px}
 .bar button{width:12px;height:12px;border-radius:50%;background:#ec6a5e;color:transparent;font-size:10px;font-weight:700;line-height:12px;text-align:center}
 #min{background:#f4bf4f}
@@ -107,6 +113,8 @@ html:not(.js) :is(.input,.status,.keys),.js #lib,.menu:not([hidden])~*{display:n
   .me{width:40%;margin-left:2ch}
   .links a{grid-template-columns:15ch minmax(0,1fr)}
   .photos{grid-template-columns:repeat(2,1fr)}
+  .desk{gap:18px;padding:24px 16px 100px}
+  .desk figure{width:40vw}
   .menu button{grid-template-columns:15ch minmax(0,1fr)}
   .keys{grid-template-columns:repeat(2,max-content)}
   .keys p,#mode span,#toggle{display:none}
