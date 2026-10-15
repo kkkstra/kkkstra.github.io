@@ -16,8 +16,24 @@
 </head>
 <body>
 {% assign host = site.url | remove: 'https://' | remove: 'http://' %}{% assign sections = content | split: '<h2' %}{% assign recent = page.milestones.size | minus: 3 | at_least: 0 %}{% assign gallery = page.gallery.title | slugify %}{% capture mascot %}<svg class="mascot" width="84" height="63" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h4v1H3zM9 0h1v1H9zM1 1h10v1H1zM0 2h12v5H0zM1 7h10v1H1zM2 8h1v1H2zM9 8h1v1H9z"/><path class="hole" d="M1 3h1v1H1zM4 3h4v1H4zM3 4h6v2H3zM4 6h4v1H4z"/><rect class="iris" x="5" y="4" width="2" height="2"/></svg>{% endcapture %}
+<nav class="mb">
+  <div class="m"><button class="logo" aria-label="Site menu">{{ mascot }}</button><div class="dd"><button data-act="about">About This Site</button><button data-run="/all">Show Everything<span>↵</span></button><hr><button data-act="min">Sleep</button><button data-act="restart">Restart</button><button data-act="close">Shut Down</button></div></div>
+  <b class="app">{{ page.title }}</b>
+  <div class="m am"><button>Go</button><div class="dd" id="go"></div></div>
+  <div class="m am"><button>View</button><div class="dd"><button data-act="theme">Dark Mode<span>/theme</span></button><button data-act="full">Full Screen</button><button data-act="keys">Shortcuts<span>?</span></button></div></div>
+  <div class="m am"><button>Window</button><div class="dd"><button data-act="min">Minimize</button><button data-act="full">Zoom</button><hr><button data-act="close">Close Window</button></div></div>
+  <div class="m am"><button>Help</button><div class="dd"><button data-run="/help">Commands<span>/help</span></button><button data-run="/contact">Contact<span>/contact</span></button></div></div>
+  <i class="sp"></i>
+  <div class="m"><button class="np"><svg viewBox="0 0 16 16"><path d="M6 3.2 14 1v10a2.2 2.2 0 1 1-1.6-2.1V4.1L7.6 5.4v7.8A2.2 2.2 0 1 1 6 11.1z"/></svg><span>Coming soon</span></button><div class="dd panel music"><div class="cover">{{ mascot }}</div><p><b>Coming Soon</b><br><span>A playlist is on its way</span></p><div class="ctl"><svg viewBox="0 0 16 16"><path d="M3 3h2v10H3zM14 3v10L6 8z"/></svg><svg viewBox="0 0 16 16"><path d="M4 2v12l10-6z"/></svg><svg viewBox="0 0 16 16"><path d="M11 3h2v10h-2zM2 3v10l8-5z"/></svg></div></div></div>
+  <span class="quote">{{ page.status }}</span>
+  <div class="m"><button aria-label="Control Center"><svg class="ln" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="4.5" rx="2.25"/><rect x="1.5" y="9" width="13" height="4.5" rx="2.25"/></svg></button><div class="dd panel cc"><button data-act="theme">Dark Mode</button><button data-act="full">Full Screen</button><button data-act="keys">Shortcuts</button></div></div>
+  <button data-act="spot" aria-label="Search" title="Search (⌘K)"><svg class="ln" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3.5 3.5"/></svg></button>
+  <div class="m"><button id="clock"></button><div class="dd panel nc"><p class="tz"><span id="city"></span><b id="big"></b><span id="date"></span><span id="yours"></span></p><div id="news"></div></div></div>
+</nav>
+<dialog id="spot"><form><input placeholder="Search commands and content" aria-label="Search" autocomplete="off"><div class="hits"></div></form></dialog>
+<dialog id="about"><form method="dialog">{{ mascot }}<b>{{ page.title }}</b><p class="dim">Version {{ site.time | date: '%Y.%-m' }}</p><p>Built with Jekyll, hosted on GitHub Pages.<br>Updated {{ site.time | date: '%-d %b %Y' }}.</p><button>OK</button></form></dialog>
 <div class="win">
-  <div class="bar"><button id="close" aria-label="Close">×</button><button id="min" aria-label="Minimize">−</button><button id="max" aria-label="Full screen">+</button><span>~/{{ host }} — claude</span></div>
+  <div class="bar"><button data-act="close" aria-label="Close">×</button><button data-act="min" aria-label="Minimize">−</button><button data-act="full" aria-label="Full screen">+</button><span>~/{{ host }} — claude</span></div>
   <div class="term">
     <div class="welcome">
       <p class="ttl">{{ page.title }} <span>v{{ site.time | date: '%Y.%-m' }}</span></p>
@@ -49,14 +65,14 @@
     </div>
     <form class="input" id="prompt"><span class="dim">&gt;</span><input id="q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="Press ↵ for everything · / for commands" aria-label="Type a command or a question"></form>
     <div class="menu" id="menu" hidden></div>
-    <div class="status"><p><button data-run="/all">↵ show everything</button><button id="toggle">&nbsp;· ? for shortcuts</button></p><button id="mode" data-run="/theme">» <b>light</b> mode on <span>(/theme to switch)</span></button></div>
+    <div class="status"><p><button data-run="/all">↵ show everything</button><button id="toggle" data-act="keys">&nbsp;· ? for shortcuts</button></p><button id="mode" data-run="/theme">» <b>light</b> mode on <span>(/theme to switch)</span></button></div>
     <div class="keys" id="keys"></div>
   </div>
 </div>
 <div class="desk">{% for p in page.gallery.photos %}{% include photo.html p=p %}{% endfor %}{{ page.gallery.note | markdownify }}</div>
-<button class="dock" title="{{ page.title }}">{{ mascot }}</button>
+<button class="dock" data-act="open" title="{{ page.title }}">{{ mascot }}</button>
 <script>
-const $ = s => document.querySelector(s), root = document.documentElement, win = $('.win'), term = $('.term'), log = $('#log'), q = $('#q'), menu = $('#menu'), keys = $('#keys');
+const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s), root = document.documentElement, win = $('.win'), term = $('.term'), log = $('#log'), q = $('#q'), menu = $('#menu'), keys = $('#keys');
 const lib = [...document.querySelectorAll('#lib section')];
 const cmds = [['all', 'Show everything at once'], ...lib.map(s => [s.dataset.cmd, s.dataset.desc]), ['help', 'List everything I can show you'], ['theme', 'Switch between light and dark'], ['clear', 'Clear the conversation']];
 const hints = [['publications', /paper|publication|kunserve|eurosys/], ['{{ gallery }}', /photo|camera|gallery|picture/], ['honors', /award|honou?r|prize|scholarship/], ['education', /school|stud|degree|universit|educat|phd|bachelor/], ['internships', /intern|job|seed|ipads|industry/], ['news', /news|recent|latest|update/], ['contact', /contact|e-?mail|reach|github|scholar|\bcv\b|resume/], ['all', /everything|\ball\b|full|whole/], ['help', /help|what can/], ['about', /who|yourself|research|interest|working on|about/]];
@@ -77,7 +93,7 @@ const reply = (name, t) => {
   const help = `<button data-run="/help">/help</button>`;
   if (!name) return [el('say', t.startsWith('/') ? `<p>Unknown command: ${esc(t)}. Try ${help}.</p>` : `<p>I’m a static homepage, so that one is beyond me. Try ${help} to see what I can show you.</p>`)];
   if (name === 'help') return [el('say', `<p>Here’s what I can show you:</p><div class="cmds">${cmds.map(([c, d]) => `<button data-run="/${c}"><b>/${c}</b><span>${d}</span></button>`).join('')}</div><p class="dim">You can also ask in plain words, like “what are you working on?”</p>`)];
-  if (name === 'theme') return setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'), [el('res', `Theme set to ${root.dataset.theme}`)];
+  if (name === 'theme') return acts.theme(), [el('res', `Theme set to ${root.dataset.theme}`)];
   if (name === 'all') {
     const all = el('say');
     lib.forEach(s => { const b = s.cloneNode(true); b.classList.remove('say'); all.append(el('sec', s.dataset.title), b); });
@@ -90,7 +106,8 @@ const reply = (name, t) => {
 };
 const run = async (raw, quiet) => {
   const t = raw.trim();
-  q.value = ''; suggest();
+  if (win.classList.contains('closed')) log.replaceChildren();
+  show(); q.value = ''; suggest();
   if (!t || busy) return;
   hist.push(t); hi = hist.length; busy = true;
   const name = resolve(t);
@@ -115,7 +132,6 @@ function suggest() {
 }
 keys.innerHTML = cmds.map(([c]) => `<button data-run="/${c}">/${c}</button>`).join('') + '<p>↑↓ history · tab to complete · ? to toggle this list</p>';
 paint();
-$('#toggle').onclick = () => keys.hidden = !keys.hidden;
 $('#prompt').onsubmit = e => { e.preventDefault(); run(menu.hidden ? q.value.trim() || '/all' : menu.querySelector('.on').dataset.run); };
 q.oninput = () => { sel = 0; suggest(); };
 q.onkeydown = e => {
@@ -128,16 +144,42 @@ q.onkeydown = e => {
   else return;
   e.preventDefault();
 };
+const spot = $('#spot'), sq = $('#spot input'), hits = $('#spot .hits'), show = () => win.classList.remove('closed', 'min');
+const acts = {
+  close: () => win.classList.add('closed'), min: () => win.classList.add('min'), full: () => win.classList.toggle('full'),
+  open: () => win.classList.contains('closed') ? acts.restart() : show(),
+  restart: () => { show(); log.replaceChildren(); q.value = ''; intro(); },
+  theme: () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'),
+  keys: () => keys.hidden = !keys.hidden,
+  about: () => $('#about').showModal(),
+  spot: () => { sq.value = ''; sq.oninput(); spot.showModal(); },
+};
+const openMenu = m => $$('.m').forEach(x => x.classList.toggle('open', x === m));
 document.addEventListener('click', e => {
-  const b = e.target.closest('[data-run]');
+  const t = e.target, top = t.closest('.m > button'), m = t.closest('.m'), a = t.closest('[data-act]'), b = t.closest('[data-run]');
+  openMenu(t.closest('.panel') || top && !m.classList.contains('open') ? m : null);
+  if (top) return;
+  if (a) return acts[a.dataset.act]();
   if (b) return e.preventDefault(), run(b.dataset.run);
-  if (fine && e.target.closest('.term') && !e.target.closest('a,button,input') && !getSelection().toString()) q.focus({preventScroll: true});
+  if (fine && t.closest('.term') && !t.closest('a,button,input') && !getSelection().toString()) q.focus({preventScroll: true});
 });
-addEventListener('wheel', e => e.target.closest('.win') || term.scrollBy(e.deltaX, e.deltaY), {passive: true});
-$('#close').onclick = () => win.classList.add('closed');
-$('#min').onclick = () => win.classList.add('min');
-$('#max').onclick = () => win.classList.toggle('full');
-$('.dock').onclick = () => { if (win.classList.contains('closed')) log.replaceChildren(), q.value = '', intro(); win.classList.remove('closed', 'min'); };
+$('.mb').onmouseover = e => { const m = e.target.closest('.m'); if (m && $('.m.open')) openMenu(m); };
+addEventListener('keydown', e => (e.metaKey || e.ctrlKey) && e.key === 'k' ? (e.preventDefault(), acts.spot()) : e.key === 'Escape' && openMenu());
+addEventListener('wheel', e => e.target.closest('.win,.mb,dialog') || term.scrollBy(e.deltaX, e.deltaY), {passive: true});
+$$('dialog').forEach(d => d.addEventListener('click', e => e.target === d && d.close()));
+sq.oninput = () => { const v = sq.value.toLowerCase().trim(); hits.innerHTML = cmds.filter(([c, d]) => `${c} ${d} ${lib.find(s => s.dataset.cmd === c)?.textContent ?? ''}`.toLowerCase().includes(v)).slice(0, 8).map(([c, d]) => `<button value="/${c}">/${c}<span>${d}</span></button>`).join(''); };
+$('#spot form').onsubmit = e => { e.preventDefault(); spot.close(); run(e.submitter?.value ?? sq.value); };
+$('#go').innerHTML = '<button data-run="/all">Everything<span>↵</span></button><hr>' + lib.map(s => `<button data-run="/${s.dataset.cmd}">${s.dataset.title}</button>`).join('');
+$('#news').innerHTML = [...lib.find(s => s.dataset.cmd === 'news')?.querySelectorAll('li') ?? []].map(li => `<p><span>${li.firstChild.textContent}</span>${li.innerHTML.replace(li.firstChild.outerHTML, '')}</p>`).join('');
+const tz = '{{ page.timezone }}' || undefined, fmt = o => new Intl.DateTimeFormat('en-GB', {timeZone: tz, ...o}).format(new Date()), hm = {hour: '2-digit', minute: '2-digit'};
+const tick = () => {
+  $('#clock').textContent = fmt({weekday: 'short', day: 'numeric', month: 'short', ...hm}).replace(',', '');
+  $('#big').textContent = fmt(hm); $('#date').textContent = fmt({weekday: 'long', day: 'numeric', month: 'long'});
+  const mine = new Intl.DateTimeFormat('en-GB', hm).format(new Date());
+  $('#yours').textContent = mine === fmt(hm) ? '' : `Your time ${mine}`;
+};
+$('#city').textContent = (tz ?? 'Local time').split('/').pop().replace(/_/g, ' ');
+tick(); setInterval(tick, 5000);
 const intro = async () => {
   const first = '/' + lib[0].dataset.cmd;
   await sleep(500);

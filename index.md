@@ -5,6 +5,8 @@ permalink: /
 redirect_from: [/about/, /about.html]
 title: Yuxin Lai
 motto: Per aspera ad astra
+status: Beautiful things don't ask for attention.   # shown in the menu bar
+timezone: Asia/Hong_Kong   # menu-bar clock; the visitor's own time is shown beside it when different
 avatar: /images/avatar_0.jpg   # shown beside the first section
 links:          # listed by /contact, in this order
   Email: mailto:yuxin.lai@outlook.com
