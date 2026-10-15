@@ -17,7 +17,7 @@
 <body>
 {% assign host = site.url | remove: 'https://' | remove: 'http://' %}{% assign sections = content | split: '<h2' %}{% assign recent = page.milestones.size | minus: 3 | at_least: 0 %}{% assign gallery = page.gallery.title | slugify %}{% capture mascot %}<svg class="mascot" width="84" height="63" viewBox="0 0 12 9" shape-rendering="crispEdges" aria-hidden="true"><path d="M3 0h4v1H3zM9 0h1v1H9zM1 1h10v1H1zM0 2h12v5H0zM1 7h10v1H1zM2 8h1v1H2zM9 8h1v1H9z"/><path class="hole" d="M1 3h1v1H1zM4 3h4v1H4zM3 4h6v2H3zM4 6h4v1H4z"/><rect class="iris" x="5" y="4" width="2" height="2"/></svg>{% endcapture %}
 <nav class="mb">
-  <div class="m"><button class="logo" aria-label="Site menu">{{ mascot }}</button><div class="dd"><button data-act="about">About This Site</button><button data-run="/all">Show Everything<span>↵</span></button><hr><button data-act="min">Sleep</button><button data-act="restart">Restart</button><button data-act="close">Shut Down</button></div></div>
+  <div class="m"><button class="logo" aria-label="Site menu">{{ mascot }}</button><div class="dd"><button data-act="about">About</button><button data-run="/all">Show Everything<span>↵</span></button></div></div>
   <b class="app">{{ page.title }}</b>
   <div class="m am"><button>Go</button><div class="dd" id="go"></div></div>
   <div class="m am"><button>View</button><div class="dd"><button data-act="theme">Dark Mode<span>/theme</span></button><button data-act="full">Full Screen</button><button data-act="keys">Shortcuts<span>?</span></button></div></div>
@@ -60,7 +60,7 @@
         {{ page.gallery.note | markdownify }}
       </section></div>
       <div class="turn"><p class="you">&gt; /contact</p><section class="say links" data-cmd="contact" data-title="Contact" data-kind="links" data-desc="{% for l in page.links %}{{ l[0] }}{% unless forloop.last %}, {% endunless %}{% endfor %}">
-        <ul>{% for l in page.links %}<li><a href="{{ l[1] }}"><b>{{ l[0] }}</b><span>{{ l[1] | remove: 'mailto:' | remove: 'https://' }}</span></a></li>{% endfor %}<li><a href="{{ page.gallery.url }}"><b>{{ page.gallery.title }}</b><span>{{ page.gallery.url | remove: 'https://' }}</span></a></li></ul>
+        <ul>{% for l in page.links %}<li><a href="{{ l[1] }}"><b>{{ l[0] }}</b> <span>{{ l[1] | remove: 'mailto:' | remove: 'https://' }}</span></a></li>{% endfor %}<li><a href="{{ page.gallery.url }}"><b>{{ page.gallery.title }}</b> <span>{{ page.gallery.url | remove: 'https://' }}</span></a></li></ul>
       </section></div>
     </div>
     <form class="input" id="prompt"><span class="dim">&gt;</span><input id="q" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder="Press ↵ for everything · / for commands" aria-label="Type a command or a question"></form>
@@ -77,7 +77,7 @@ const lib = [...document.querySelectorAll('#lib section')];
 const cmds = [['all', 'Show everything at once'], ...lib.map(s => [s.dataset.cmd, s.dataset.desc]), ['help', 'List everything I can show you'], ['theme', 'Switch between light and dark'], ['clear', 'Clear the conversation']];
 const hints = [['publications', /paper|publication|kunserve|eurosys/], ['{{ gallery }}', /photo|camera|gallery|picture/], ['honors', /award|honou?r|prize|scholarship/], ['education', /school|stud|degree|universit|educat|phd|bachelor/], ['internships', /intern|job|seed|ipads|industry/], ['news', /news|recent|latest|update/], ['contact', /contact|e-?mail|reach|github|scholar|\bcv\b|resume/], ['all', /everything|\ball\b|full|whole/], ['help', /help|what can/], ['about', /who|yourself|research|interest|working on|about/]];
 const verbs = ['Thinking', 'Pondering', 'Stargazing', 'Musing', 'Recollecting'], hist = [], fine = matchMedia('(pointer: fine)').matches;
-let hi = 0, sel = 0, busy = false;
+let hi = 0, sel = 0, pick = 0, busy = false;
 const el = (cls, html = '') => Object.assign(document.createElement('div'), {className: cls, innerHTML: html});
 const esc = s => s.replace(/[&<>"]/g, c => `&#${c.charCodeAt(0)};`);
 const sleep = ms => new Promise(r => setTimeout(r, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : ms));
@@ -147,8 +147,7 @@ q.onkeydown = e => {
 const spot = $('#spot'), sq = $('#spot input'), hits = $('#spot .hits'), show = () => win.classList.remove('closed', 'min');
 const acts = {
   close: () => win.classList.add('closed'), min: () => win.classList.add('min'), full: () => win.classList.toggle('full'),
-  open: () => win.classList.contains('closed') ? acts.restart() : show(),
-  restart: () => { show(); log.replaceChildren(); q.value = ''; intro(); },
+  open: () => { if (win.classList.contains('closed')) { log.replaceChildren(); q.value = ''; intro(); } show(); },
   theme: () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'),
   keys: () => keys.hidden = !keys.hidden,
   about: () => $('#about').showModal(),
@@ -167,8 +166,25 @@ $('.mb').onmouseover = e => { const m = e.target.closest('.m'); if (m && $('.m.o
 addEventListener('keydown', e => (e.metaKey || e.ctrlKey) && e.key === 'k' ? (e.preventDefault(), acts.spot()) : e.key === 'Escape' && openMenu());
 addEventListener('wheel', e => e.target.closest('.win,.mb,dialog') || term.scrollBy(e.deltaX, e.deltaY), {passive: true});
 $$('dialog').forEach(d => d.addEventListener('click', e => e.target === d && d.close()));
-sq.oninput = () => { const v = sq.value.toLowerCase().trim(); hits.innerHTML = cmds.filter(([c, d]) => `${c} ${d} ${lib.find(s => s.dataset.cmd === c)?.textContent ?? ''}`.toLowerCase().includes(v)).slice(0, 8).map(([c, d]) => `<button value="/${c}">/${c}<span>${d}</span></button>`).join(''); };
-$('#spot form').onsubmit = e => { e.preventDefault(); spot.close(); run(e.submitter?.value ?? sq.value); };
+const blk = 'p,li,h3,:not(.me)>figcaption', blocks = lib.flatMap(s => [...s.querySelectorAll(blk)].map((b, i) => [s, i, b.textContent.replace(/\s+/g, ' ').trim()]));
+const mark = (t, v) => { const i = t.toLowerCase().indexOf(v), a = i > 24 ? t.lastIndexOf(' ', i - 16) + 1 : 0; return (a ? '…' : '') + esc(t.slice(a, i)) + `<mark>${esc(t.slice(i, i + v.length))}</mark>` + esc(t.slice(i + v.length)); };
+const pickAt = i => { const bs = hits.querySelectorAll('button'); pick = (i + bs.length) % (bs.length || 1); bs.forEach((b, j) => b.classList.toggle('on', j === pick)); bs[pick]?.scrollIntoView({block: 'nearest'}); };
+sq.oninput = () => {
+  const v = sq.value.toLowerCase().trim(), cs = cmds.filter(([c, d]) => `${c} ${d}`.toLowerCase().includes(v)), bs = v ? blocks.filter(b => b[2].toLowerCase().includes(v)).slice(0, 8) : [];
+  hits.innerHTML = (cs.length ? '<p>Commands</p>' + cs.map(([c, d]) => `<button type="button" value="/${c}">/${c}<span>${d}</span></button>`).join('') : '')
+    + (bs.length ? '<p>Content</p>' + bs.map(([s, i, t]) => `<button type="button" value="/${s.dataset.cmd}" data-hit="${i}">${s.dataset.title}<span>${mark(t, v)}</span></button>`).join('') : '');
+  pickAt(0);
+};
+sq.onkeydown = e => { const step = {ArrowDown: 1, ArrowUp: -1}[e.key]; if (step) e.preventDefault(), pickAt(pick + step); };
+const go = async b => {
+  spot.close();
+  await run(b?.value ?? sq.value);
+  const h = b?.dataset.hit && log.lastElementChild?.querySelectorAll(`section :is(${blk})`)[b.dataset.hit];
+  if (h) h.classList.add('hit'), h.scrollIntoView({block: 'center', behavior: 'smooth'});
+};
+$('#spot form').onsubmit = e => { e.preventDefault(); go(hits.querySelectorAll('button')[pick]); };
+hits.onclick = e => { const b = e.target.closest('button'); if (b) go(b); };
+hits.onmousemove = e => { const b = e.target.closest('button'); if (b) pickAt([...hits.querySelectorAll('button')].indexOf(b)); };
 $('#go').innerHTML = '<button data-run="/all">Everything<span>↵</span></button><hr>' + lib.map(s => `<button data-run="/${s.dataset.cmd}">${s.dataset.title}</button>`).join('');
 $('#news').innerHTML = [...lib.find(s => s.dataset.cmd === 'news')?.querySelectorAll('li') ?? []].map(li => `<p><span>${li.firstChild.textContent}</span>${li.innerHTML.replace(li.firstChild.outerHTML, '')}</p>`).join('');
 const tz = '{{ page.timezone }}' || undefined, fmt = o => new Intl.DateTimeFormat('en-GB', {timeZone: tz, ...o}).format(new Date()), hm = {hour: '2-digit', minute: '2-digit'};

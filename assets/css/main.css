@@ -65,10 +65,14 @@ dialog{padding:0;border:1px solid var(--line);border-radius:12px;background:var(
 dialog::backdrop{background:rgb(0 0 0 / .12)}
 #spot{width:min(560px,92vw);margin:16vh auto auto}
 #spot input{width:100%;padding:14px 18px;border:0;outline:0;background:none;color:inherit;font:inherit;font-size:16px}
-.hits:not(:empty){padding:6px;border-top:1px solid var(--line)}
+.hits:not(:empty){max-height:min(440px,60vh);padding:6px;overflow:auto;border-top:1px solid var(--line)}
+.hits p{padding:6px 12px 2px;color:var(--dim);font-size:11px}
+.hits mark{background:none;color:var(--accent);font-weight:700}
 .hits button{display:grid;grid-template-columns:16ch minmax(0,1fr);gap:2ch;width:100%;padding:5px 12px;border-radius:6px}
 .hits span{overflow:hidden;color:var(--dim);white-space:nowrap;text-overflow:ellipsis}
-.hits:not(:hover) button:first-child,.hits button:hover{background:var(--you)}
+.hits .on{background:var(--you)}
+.hit{border-radius:4px;animation:hit 2.4s}
+@keyframes hit{0%,50%{background:color-mix(in srgb,var(--accent) 20%,transparent)}}
 #about{width:300px;padding:28px 24px 20px;text-align:center}
 #about form{display:grid;justify-items:center;gap:6px}
 #about .mascot{margin:0 0 10px}
