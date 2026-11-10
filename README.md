@@ -1,6 +1,6 @@
 # Yuxin Lai 的个人主页
 
-[yuxinlai.com](https://yuxinlai.com) 的源码。基于 Jekyll，由 GitHub Pages 自动构建发布。页面采用纯白底左右分栏布局：左栏展示头像、身份、外链与近期动态（News），右栏按章节展示个人简介、论文、教育经历、实习、奖项和摄影作品。
+[yuxinlai.com](https://yuxinlai.com) 的源码。基于 Jekyll，由 GitHub Pages 自动构建发布。页面采用左右分栏布局（支持深浅色跟随系统与手动切换）：顶部吸顶导航栏自动高亮当前章节（移动端可折叠），左栏展示头像、身份、外链图标与近期动态（News），右栏按章节展示个人简介、论文、教育经历、实习、奖项和摄影作品。
 
 <img src="docs/screenshot.png" width="100%">
 

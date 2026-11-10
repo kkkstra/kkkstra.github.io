@@ -12,19 +12,21 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5/index.css">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 <base target="_blank">
+<script>document.documentElement.dataset.theme = localStorage.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')</script>
 </head>
 <body>
 {% assign sections = content | split: '<h2' %}
 <header class="topbar">
   <div class="topbar-in">
     <a class="brand" href="#top" target="_self">{{ page.title }}</a>
-    <button class="menu-btn" aria-label="Menu" onclick="this.parentElement.classList.toggle('open')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16"/><path d="M4 12h16"/><path d="M4 12h16"/></svg></button>
-    <nav onclick="this.parentElement.classList.remove('open')">
+    <nav>
       {% for s in sections offset: 1 %}{% assign head = s | split: '</h2>' | first %}{% assign id = head | split: '"' %}{% if id[1] != 'news' %}
       <a href="#{{ id[1] }}" target="_self">{{ head | split: '>' | last }}</a>
       {% endif %}{% endfor %}
       {% if page.gallery.photos %}<a href="#{{ page.gallery.title | slugify }}" target="_self">{{ page.gallery.title }}</a>{% endif %}
     </nav>
+    <button class="icon-btn theme-btn" aria-label="Toggle theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="moon" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/><g class="sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></g></svg></button>
+    <button class="icon-btn menu-btn" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16"/><path d="M4 12h16"/><path d="M4 12h16"/></svg></button>
   </div>
 </header>
 
@@ -60,5 +62,22 @@
     {% endif %}
   </main>
 </div>
+<script>
+const root = document.documentElement, bar = document.querySelector('.topbar-in'), links = [...bar.querySelectorAll('nav a')], secs = links.map(a => document.querySelector(a.getAttribute('href')));
+let pick;
+const paint = el => links.forEach(a => a.classList.toggle('on', a === el));
+const spy = () => pick || paint(links[innerHeight + scrollY >= root.scrollHeight - 8 ? secs.length - 1 : Math.max(0, secs.findLastIndex(s => s.getBoundingClientRect().top <= 120))]);
+document.querySelector('.theme-btn').onclick = () => root.dataset.theme = localStorage.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+document.querySelector('.menu-btn').onclick = () => bar.classList.toggle('open');
+document.addEventListener('click', e => {
+  const a = e.target.closest('.topbar nav a');
+  if (a) pick = a, paint(a);
+  else if (e.target.closest('.brand')) pick = links[0], paint(pick);
+  if (!e.target.closest('.topbar') || a) bar.classList.remove('open');
+});
+['wheel', 'touchmove', 'keydown'].forEach(ev => addEventListener(ev, () => pick = null, {passive: true}));
+addEventListener('scroll', spy, {passive: true});
+spy();
+</script>
 </body>
 </html>
