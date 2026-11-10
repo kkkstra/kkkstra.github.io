@@ -66,7 +66,11 @@
 const root = document.documentElement, bar = document.querySelector('.topbar-in'), links = [...bar.querySelectorAll('nav a')], secs = links.map(a => document.querySelector(a.getAttribute('href')));
 let pick;
 const paint = el => links.forEach(a => a.classList.toggle('on', a === el));
-const spy = () => pick || paint(links[innerHeight + scrollY >= root.scrollHeight - 8 ? secs.length - 1 : Math.max(0, secs.findLastIndex(s => s.getBoundingClientRect().top <= 120))]);
+const spy = () => {
+  if (pick) return;
+  const line = 80 + scrollY / (root.scrollHeight - innerHeight || 1) * (innerHeight - 120);
+  paint(links[Math.max(0, secs.findLastIndex(s => s.getBoundingClientRect().top <= line))]);
+};
 document.querySelector('.theme-btn').onclick = () => root.dataset.theme = localStorage.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
 document.querySelector('.menu-btn').onclick = () => bar.classList.toggle('open');
 document.addEventListener('click', e => {
