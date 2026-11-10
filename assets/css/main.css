@@ -10,7 +10,8 @@ strong{font-weight:600}
 .topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid #ededeb}
 .topbar-in{max-width:1050px;margin:0 auto;padding:0 36px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .brand{font:500 18px "Newsreader Variable",Georgia,serif;text-decoration:none;white-space:nowrap}
-.topbar nav{display:flex;gap:22px;font-size:13.5px;color:#666;overflow-x:auto}
+.menu-btn{display:none;padding:0;border:0;background:none;color:inherit;cursor:pointer}
+.topbar nav{display:flex;gap:22px;font-size:13.5px;color:#666}
 .topbar nav a{text-decoration:none;white-space:nowrap}
 .topbar nav a:hover{color:#000}
 
@@ -53,8 +54,13 @@ strong{font-weight:600}
 .photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;display:block}
 
 @media (max-width:720px){
-  .topbar-in{padding:0 20px;height:46px}
-  .topbar nav{gap:14px;font-size:13px}
+  .topbar-in{padding:0 20px;height:48px}
+  .menu-btn{display:grid;place-items:center;width:32px;height:32px;margin-right:-6px}
+  .menu-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+  .open .bars,.topbar-in:not(.open) .x,.topbar-in:not(.open) nav{display:none}
+  .topbar nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;padding:4px 20px 10px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid #ededeb;box-shadow:0 12px 24px -12px rgba(0,0,0,.08);font-size:14px}
+  .topbar nav a{padding:9px 0;border-top:1px solid #f2f2f0}
+  .topbar nav a:first-child{border-top:0}
   .layout{grid-template-columns:1fr;gap:32px;padding:28px 20px 56px}
   .left{position:static;padding:0 0 28px;border-right:0;border-bottom:1px solid #ededeb}
   .right .dated{padding-left:0}

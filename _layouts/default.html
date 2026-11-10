@@ -18,7 +18,8 @@
 <header class="topbar">
   <div class="topbar-in">
     <a class="brand" href="#top" target="_self">{{ page.title }}</a>
-    <nav>
+    <button class="menu-btn" aria-label="Menu" onclick="this.parentElement.classList.toggle('open')"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="bars" d="M4 7h16M4 12h16M4 17h16"/><path class="x" d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <nav onclick="this.parentElement.classList.remove('open')">
       {% for s in sections offset: 1 %}{% assign head = s | split: '</h2>' | first %}{% assign id = head | split: '"' %}{% if id[1] != 'news' %}
       <a href="#{{ id[1] }}" target="_self">{{ head | split: '>' | last }}</a>
       {% endif %}{% endfor %}
