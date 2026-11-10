@@ -57,8 +57,14 @@ strong{font-weight:600}
   .topbar-in{padding:0 20px;height:48px}
   .menu-btn{display:grid;place-items:center;width:32px;height:32px;margin-right:-6px}
   .menu-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-  .open .bars,.topbar-in:not(.open) .x,.topbar-in:not(.open) nav{display:none}
-  .topbar nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;padding:4px 20px 10px;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid #ededeb;box-shadow:0 12px 24px -12px rgba(0,0,0,.08);font-size:14px}
+  .menu-btn path{transform-origin:center;transition:.22s}
+  .menu-btn path:first-child{translate:0 -5px}
+  .menu-btn path:last-child{translate:0 5px}
+  .open .menu-btn path:first-child{translate:0;rotate:45deg}
+  .open .menu-btn path:nth-child(2){opacity:0}
+  .open .menu-btn path:last-child{translate:0;rotate:-45deg}
+  .topbar nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;max-height:280px;padding:4px 20px 10px;overflow:hidden;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-bottom:1px solid #ededeb;box-shadow:0 12px 24px -12px rgba(0,0,0,.08);font-size:14px;transition:max-height .25s ease,padding .25s ease,opacity .2s ease,visibility .25s}
+  .topbar-in:not(.open) nav{max-height:0;padding-block:0;opacity:0;visibility:hidden;border-bottom-color:transparent;pointer-events:none}
   .topbar nav a{padding:9px 0;border-top:1px solid #f2f2f0}
   .topbar nav a:first-child{border-top:0}
   .layout{grid-template-columns:1fr;gap:32px;padding:28px 20px 56px}
