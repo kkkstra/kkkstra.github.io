@@ -1,6 +1,6 @@
 # Yuxin Lai 的个人主页
 
-[yuxinlai.com](https://yuxinlai.com) 的源码。基于 Jekyll，由 GitHub Pages 自动构建发布。页面是一个仿 Claude Code 的可交互终端：访客可以输入斜杠命令或直接提问，也可以点 **Show everything** 一次看完全部内容。
+[yuxinlai.com](https://yuxinlai.com) 的源码。基于 Jekyll，由 GitHub Pages 自动构建发布。页面采用纯白底左右分栏布局：左栏展示头像、身份、外链与近期动态（News），右栏按章节展示个人简介、论文、教育经历、实习、奖项和摄影作品。
 
 <img src="docs/screenshot.png" width="100%">
 
@@ -12,23 +12,17 @@
 
 | 字段 | 作用 |
 | --- | --- |
-| `title`、`motto` | 欢迎框里的名字和格言，也用作网页标题和描述 |
-| `status` | 顶栏中间的一句话（窗口较窄时隐藏） |
-| `timezone` | 顶栏时钟用的时区，例如 `Asia/Hong_Kong`；点开时钟能看到 News 各条，访客时区不同时还会显示访客的当地时间 |
-| `avatar` | 个人照片，显示在第一节的回答旁边；删掉这一行就不显示 |
-| `links` | `/contact` 列出的链接，按书写顺序显示 |
-| `gallery` | 摄影网站：`title`、`url` 是名称和地址（`/contact` 末尾也会列出）；`photos` 是 `/photography` 展示的照片（`photo`、`alt`、`caption`，可选的裁切位置 `focus`），都链接到 `url`；`note` 是照片下面的一段 Markdown |
-| `milestones` | 欢迎框 Recent activity 里的近况，从早到晚排列，只显示最新三条 |
-
-YAML 里的日期要加引号（`"2025.10"`），否则会被读成数字 2025.1。
+| `title`、`motto` | 左栏的名字和格言，也用作网页标题和描述 |
+| `role` | 左栏的身份说明（支持多行） |
+| `avatar` | 个人头像；删掉这一行就不显示 |
+| `links` | 左栏列出的外链，按书写顺序显示 |
+| `gallery` | 摄影作品：`title` 是章节标题，`url` 是摄影站地址（左栏外链末尾也会列出 `Gallery`），`photos` 是展示的照片（`photo`、`alt`，可选裁切位置 `focus`），点击照片会跳转到 `url` |
 
 正文是普通 Markdown：
 
-- 每个 `## 标题` 是一节，会自动变成一条斜杠命令（`## News` 对应 `/news`），命令菜单里的说明取自这一节的开头。打开页面时会自动执行第一节。
-- 以斜体日期开头的列表项，日期会排进左侧的日期栏，例如 `- *2025.08* KunServe is accepted by EuroSys 2026!`。
-- 论文写成 `### [标题](链接)`，紧跟的一段（作者、会议）显示为灰色小字。
-
-除了各节，页面还有几条固定命令：`/all`（或在空输入框按回车）展示全部内容，`/help` 列出所有命令，`/theme` 切换深浅色（默认跟随系统，切换后会记住选择），`/clear` 清空对话。窗口左上角的红黄绿按钮分别是关闭（点 Dock 图标重新打开一个新会话）、最小化（点 Dock 图标原样恢复）和铺满整个网页。页面顶部是仿 macOS 的顶栏：左边的菜单能跳到各节、切换深浅色和操作窗口，右边有控制中心、搜索（⌘K，同时搜命令和正文，上下键选择，选中正文会跳到那一行）和时钟。访客直接用英文提问时，会按关键词匹配到对应的节，例如 “any papers?” 显示 Publications；关键词写在 `_layouts/default.html` 的 `hints` 里，新增一节后如果想让提问也能找到它，在那里加一行。
+- `## About` 显示在右栏顶部；`## News` 自动放入左栏下方；其余每个 `## 标题` 按书写顺序在右栏渲染为一节。
+- 以斜体日期开头的列表项，日期会自动排进左侧的日期栏，例如 `- *2025.08* *KunServe* is accepted by **EuroSys 2026**!`。
+- 论文写成 `### [标题](链接)`，紧跟的一段（作者、会议）和简介会自动套用论文排版样式。
 
 ## 本地预览
 
@@ -48,9 +42,9 @@ bash run_server.sh   # 打开 http://127.0.0.1:4000，保存文件后页面自�
 | 文件 | 内容 |
 | --- | --- |
 | `index.md` | 主页的全部内容 |
-| `_layouts/default.html` | 页面结构和交互脚本：欢迎框、命令、对话记录 |
-| `_includes/photo.html` | 带拍摄参数的照片 |
-| `assets/css/main.css` | 样式，含浅色和深色两套配色 |
+| `_layouts/default.html` | 页面左右分栏模板 |
+| `_includes/photo.html` | 摄影作品图片项 |
+| `assets/css/main.css` | 样式表 |
 | `_config.yml` | 站点设置：域名、Markdown、插件 |
 | `assets/CV.pdf`、`images/` | 简历、个人照片和网站图标 |
 
