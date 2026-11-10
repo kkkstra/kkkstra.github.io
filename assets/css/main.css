@@ -33,8 +33,7 @@ strong{font-weight:700}
 .mb{position:fixed;inset:0 0 auto;z-index:2;display:flex;align-items:center;gap:2px;height:var(--mb);padding:0 10px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--page) 80%,transparent);backdrop-filter:blur(14px);font-size:12.5px;line-height:1}
 .mb>button,.m>button{display:flex;align-items:center;gap:6px;height:22px;padding:0 8px;border-radius:5px;white-space:nowrap}
 .m.open>button{background:color-mix(in srgb,var(--text) 12%,transparent)}
-.mb svg{width:15px;height:15px;fill:currentColor}
-.mb .ln{fill:none;stroke:currentColor;stroke-width:1.5}
+.ln{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5}
 .logo .mascot{width:18px;height:auto;margin:0}
 .app{padding:0 8px}
 .sp{flex:1}
@@ -48,10 +47,6 @@ strong{font-weight:700}
 .dd span{color:var(--dim)}
 .dd button:hover span{color:inherit}
 .dd hr{margin:5px 10px;border:0;border-top:1px solid var(--line)}
-.music{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;width:290px;padding:14px}
-.cover{display:grid;place-items:center;height:56px;border-radius:6px;background:var(--you)}
-.cover .mascot{width:30px;height:auto;margin:0}
-.ctl{display:flex;grid-column:1/-1;justify-content:center;gap:34px;opacity:.35}
 .cc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:380px;padding:10px}
 .cc button{padding:10px 12px;border-radius:8px;background:var(--you)}
 .cc button::after{content:var(--s,"Off");display:block;font-size:11px;opacity:.7}
@@ -152,7 +147,7 @@ html:not(.js) :is(.input,.status,.keys,.mb),.js #lib,.menu:not([hidden])~*{displ
 
 @media (max-width:1100px){.quote{display:none}}
 @media (max-width:680px){
-  .am,.app,.np span{display:none}
+  .am,.app{display:none}
   .mb .m .dd{position:fixed;inset:calc(var(--mb) + 4px) 8px auto;width:auto}
   body{font-size:12.5px}
   .win{--gap:0px;border:0;border-radius:0}
