@@ -44,9 +44,10 @@ bash run_server.sh   # 打开 http://127.0.0.1:4000，保存文件后页面自�
 | `index.md` | 主页的全部内容 |
 | `_layouts/default.html` | 页面左右分栏模板 |
 | `_includes/photo.html` | 摄影作品图片项 |
-| `assets/css/main.css` | 样式表 |
+| `assets/css/main.css` | 样式表（含浅色/深色主题与移动端磨砂折叠导航） |
+| `assets/js/pet.js` | 像素快门小精灵与页面元素取景/拍立得交互 |
 | `_config.yml` | 站点设置：域名、Markdown、插件 |
-| `assets/CV.pdf`、`images/` | 简历、个人照片和网站图标 |
+| `assets/CV.pdf`、`images/` | 简历、个人照片、拍立得配图和网站图标 |
 
 ## 致谢
 
