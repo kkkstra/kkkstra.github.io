@@ -36,6 +36,8 @@ I am also a research intern with the Infrastructure team at ByteDance Seed. Prev
 
 I received my bachelor’s degree from the School of Computer Science and Technology at Huazhong University of Science and Technology.
 
+You can find my CV here: [Yuxin’s Curriculum Vitae](/assets/CV.pdf).
+
 ## News
 
 - *2025.08* *KunServe* is accepted by **EuroSys 2026**!
